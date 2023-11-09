@@ -6,4 +6,5 @@ fun main() {
     val dessert = mapOf("초코케이크" to 15000, "아이스크림" to 5000)
     val drink = mapOf("제로콜라" to 3000, "레드와인" to 60000, "샴페인" to 25000)
 
+    val days = listOf("목", "금", "토", "일", "월", "화", "수")
 }
