@@ -1,6 +1,12 @@
-package christmas
-
 import camp.nextstep.edu.missionutils.Console
+
+class InvalidDateException(message: String) : Exception(message)
+class DuplicateMenuException(message: String) : Exception(message)
+class InvalidMenuException(message: String) : Exception(message)
+class InvalidQuantityException(message: String) : Exception(message)
+class InvalidFormatException(message: String) : Exception(message)
+class MaximumMenusExceededException(message: String) : Exception(message)
+class DrinksOnlyException(message: String) : Exception(message)
 
 fun isValidDate(input: String): Boolean {
     return try {
@@ -28,10 +34,10 @@ fun main() {
     do {
         date = Console.readLine()
 
-        if (isValidDate(date)) {
-            validDate = true
+        if (!isValidDate(date)) {
+            throw InvalidDateException("[ERROR] Invalid date. Please re-enter.")
         } else {
-            println("[ERROR] 유효하지 않은 날짜입니다. 다시 입력해 주세요.")
+            validDate = true
         }
 
     } while (!validDate)
@@ -40,8 +46,7 @@ fun main() {
 
     val inputMenu = Console.readLine()
     val menuItems = inputMenu.split(",")
-
-    val orderedItems = mutableSetOf<String>()
+    val orderedItems = mutableMapOf<String, Int>()
     var totalMenusOrdered = 0
 
     for (menuItem in menuItems) {
@@ -54,28 +59,37 @@ fun main() {
                 if (quantity >= 1) {
                     if (appetizer.containsKey(menuName) || main.containsKey(menuName) ||
                             dessert.containsKey(menuName) || drink.containsKey(menuName)) {
-                        if (orderedItems.contains(menuName)) {
-                            println("[ERROR] 중복 메뉴")
+                        if (orderedItems.containsKey(menuName)) {
+                            throw DuplicateMenuException("[ERROR] Duplicate menu")
                         } else {
-                            orderedItems.add(menuName)
+                            orderedItems[menuName] = quantity
                             totalMenusOrdered += quantity
-                            println("Ordered: $menuName - Quantity: $quantity")
                         }
-                    } else { // The menu entered is not on the menu
-                        println("[ERROR] 메뉴판에 없는 메뉴")
+                    } else {
+                        throw InvalidMenuException("[ERROR] Invalid menu: $menuName")
                     }
-                } else { // quantity less than 1
-                    println("[ERROR] 수량이 1 미만")
+                } else {
+                    throw InvalidQuantityException("[ERROR] Quantity less than 1 for: $menuName")
                 }
+            } else {
+                throw InvalidFormatException("[ERROR] Invalid format: $menuItem")
             }
-        } else { // invalid format
-            println("[ERROR] 잘못된 형식")
+        } else {
+            throw InvalidFormatException("[ERROR] Invalid format: $menuItem")
         }
     }
-    if (totalMenusOrdered > 20) {
-        println("[ERROR] 메뉴는 최대 20개까지만 주문할 수 있습니다.")
+
+    if (orderedItems.all { drink.containsKey(it.key) } && orderedItems.isNotEmpty()) {
+        throw DrinksOnlyException("[ERROR] You can't just order drinks")
     }
-    if (orderedItems.all { drink.containsKey(it) } && orderedItems.isNotEmpty()) {
-        println("[ERROR] 음료만 주문하실 수 없습니다.")
+
+    if (totalMenusOrdered > 20) {
+        throw MaximumMenusExceededException("Only up to 20 menus can be ordered. [ERROR]")
+    }
+
+    println("12월 ${date}일에 우테코 식당에서 받을 이벤트 혜택 미리 보기!\n")
+    println("<주문 메뉴>")
+    for ((menuName, quantity) in orderedItems) {
+        println("${menuName} ${quantity}개")
     }
 }
