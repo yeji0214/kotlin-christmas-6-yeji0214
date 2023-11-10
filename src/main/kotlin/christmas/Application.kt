@@ -140,8 +140,15 @@ fun applyDiscounts(currentDate: Int, totalAmount: Int, days: List<String>, order
         0
     }
 
+    // Check for special discount
+    val specialDiscount = if (currentDate % 7 == 3 || currentDate == 25) {
+        1000
+    } else {
+        0
+    }
+
     val totalDiscount = if (totalAmount > 10000) {
-        christmasDayDiscount + additionalDiscount
+        christmasDayDiscount + additionalDiscount + specialDiscount
     } else {
         0
     }
