@@ -87,13 +87,17 @@ fun main() {
         throw MaximumMenusExceededException("Only up to 20 menus can be ordered. [ERROR]")
     }
 
+    val currentDate = date.toInt()
+    val totalAmount = calculateTotalAmount(orderedItems, appetizer, main, dessert, drink)
+    val discountedTotalAmount = applyDiscounts(currentDate, totalAmount)
+
     println("12월 ${date}일에 우테코 식당에서 받을 이벤트 혜택 미리 보기!\n")
     println("<주문 메뉴>")
     for ((menuName, quantity) in orderedItems) {
         println("${menuName} ${quantity}개")
     }
-
-    println("\n<할인 전 총주문 금액>\n${calculateTotalAmount(orderedItems, appetizer, main, dessert, drink)}원")
+    println("\n<할인 전 총주문 금액>\n${totalAmount}원")
+    println("\n<할인 후 총주문 금액>\n${discountedTotalAmount}원")
 }
 
 fun calculateTotalAmount(orderedItems: Map<String, Int>, appetizer: Map<String, Int>, main: Map<String, Int>, dessert: Map<String, Int>, drink: Map<String, Int>): Int {
@@ -109,4 +113,18 @@ fun calculateTotalAmount(orderedItems: Map<String, Int>, appetizer: Map<String, 
         totalAmount += price * quantity
     }
     return totalAmount
+}
+
+fun applyDiscounts(currentDate: Int, totalAmount: Int): Int {
+    val christmasDayDiscount = if (currentDate in 1..25) {
+        1000 + (currentDate - 1) * 100
+    } else {
+        0
+    }
+    val totalDiscount = if (totalAmount > 10000) {
+        christmasDayDiscount
+    } else {
+        0
+    }
+    return totalAmount - totalDiscount
 }
