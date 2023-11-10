@@ -41,6 +41,8 @@ fun main() {
     val inputMenu = Console.readLine()
     val menuItems = inputMenu.split(",")
 
+    val orderedItems = mutableSetOf<String>()
+
     for (menuItem in menuItems) {
         val parts = menuItem.split("-")
         if (parts.size == 2) {
@@ -51,16 +53,21 @@ fun main() {
                 if (quantity >= 1) {
                     if (appetizer.containsKey(menuName) || main.containsKey(menuName) ||
                             dessert.containsKey(menuName) || drink.containsKey(menuName)) {
-                        println("Ordered: $menuName - Quantity: $quantity")
-                    } else { // 입력한 메뉴가 메뉴판에 없음
-                        println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
+                        if (orderedItems.contains(menuName)) {
+                            println("[ERROR] Duplicate order for: $menuName. Please re-enter.")
+                        } else {
+                            orderedItems.add(menuName)
+                            println("Ordered: $menuName - Quantity: $quantity")
+                        }
+                    } else { // The menu entered is not on the menu
+                        println("[ERROR] Invalid order. Please re-enter.")
                     }
-                } else { // 수량이 1 미만
-                    println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
+                } else { // quantity less than 1
+                    println("[ERROR] Invalid order. Please re-enter.")
                 }
             }
-        } else { // 잘못된 형식
-            println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
+        } else { // invalid format
+            println("[ERROR] Invalid order. Please re-enter.")
         }
     }
 }
