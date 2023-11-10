@@ -103,7 +103,16 @@ fun main() {
         println("${menuName} ${quantity}개")
     }
     println("\n<할인 전 총주문 금액>\n${formattedTotalAmount}원")
-    println("\n<할인 후 총주문 금액>\n${formattedDiscountedTotalAmount}원")
+
+    val giftMenu = if (totalAmount >= 120000) {
+        "샴페인 1개"
+    } else {
+        "없음"
+    }
+
+    println("\n<증정 메뉴>\n$giftMenu")
+
+    println("\n<할인 후 예상 결제 금액>\n${formattedDiscountedTotalAmount}원")
 }
 
 fun calculateTotalAmount(orderedItems: Map<String, Int>, appetizer: Map<String, Int>, main: Map<String, Int>, dessert: Map<String, Int>, drink: Map<String, Int>): Int {
