@@ -54,20 +54,23 @@ fun main() {
                     if (appetizer.containsKey(menuName) || main.containsKey(menuName) ||
                             dessert.containsKey(menuName) || drink.containsKey(menuName)) {
                         if (orderedItems.contains(menuName)) {
-                            println("[ERROR] Duplicate order for: $menuName. Please re-enter.")
+                            println("[ERROR] 중복 메뉴")
                         } else {
                             orderedItems.add(menuName)
                             println("Ordered: $menuName - Quantity: $quantity")
                         }
                     } else { // The menu entered is not on the menu
-                        println("[ERROR] Invalid order. Please re-enter.")
+                        println("[ERROR] 메뉴판에 없는 메뉴")
                     }
                 } else { // quantity less than 1
-                    println("[ERROR] Invalid order. Please re-enter.")
+                    println("[ERROR] 수량이 1 미만")
                 }
             }
         } else { // invalid format
-            println("[ERROR] Invalid order. Please re-enter.")
+            println("[ERROR] 잘못된 형식")
         }
+    }
+    if (orderedItems.all { drink.containsKey(it) } && orderedItems.isNotEmpty()) {
+        println("[ERROR] 음료만 주문하실 수 없습니다.")
     }
 }
