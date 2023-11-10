@@ -92,4 +92,21 @@ fun main() {
     for ((menuName, quantity) in orderedItems) {
         println("${menuName} ${quantity}개")
     }
+
+    println("\n<할인 전 총주문 금액>\n${calculateTotalAmount(orderedItems, appetizer, main, dessert, drink)}원")
+}
+
+fun calculateTotalAmount(orderedItems: Map<String, Int>, appetizer: Map<String, Int>, main: Map<String, Int>, dessert: Map<String, Int>, drink: Map<String, Int>): Int {
+    var totalAmount = 0
+    for ((menuName, quantity) in orderedItems) {
+        val price = when {
+            appetizer.containsKey(menuName) -> appetizer.getValue(menuName)
+            main.containsKey(menuName) -> main.getValue(menuName)
+            dessert.containsKey(menuName) -> dessert.getValue(menuName)
+            drink.containsKey(menuName) -> drink.getValue(menuName)
+            else -> 0
+        }
+        totalAmount += price * quantity
+    }
+    return totalAmount
 }
