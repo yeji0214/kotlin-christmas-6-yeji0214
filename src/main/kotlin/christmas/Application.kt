@@ -42,6 +42,7 @@ fun main() {
     val menuItems = inputMenu.split(",")
 
     val orderedItems = mutableSetOf<String>()
+    var totalMenusOrdered = 0
 
     for (menuItem in menuItems) {
         val parts = menuItem.split("-")
@@ -57,6 +58,7 @@ fun main() {
                             println("[ERROR] 중복 메뉴")
                         } else {
                             orderedItems.add(menuName)
+                            totalMenusOrdered += quantity
                             println("Ordered: $menuName - Quantity: $quantity")
                         }
                     } else { // The menu entered is not on the menu
@@ -69,6 +71,9 @@ fun main() {
         } else { // invalid format
             println("[ERROR] 잘못된 형식")
         }
+    }
+    if (totalMenusOrdered > 20) {
+        println("[ERROR] 메뉴는 최대 20개까지만 주문할 수 있습니다.")
     }
     if (orderedItems.all { drink.containsKey(it) } && orderedItems.isNotEmpty()) {
         println("[ERROR] 음료만 주문하실 수 없습니다.")
