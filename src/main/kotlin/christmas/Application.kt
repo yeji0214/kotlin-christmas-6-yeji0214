@@ -2,11 +2,6 @@ import camp.nextstep.edu.missionutils.Console
 import java.text.NumberFormat
 import java.util.*
 
-class InvalidDateException(message: String) : Exception(message)
-class DuplicateMenuException(message: String) : Exception(message)
-class InvalidMenuException(message: String) : Exception(message)
-class InvalidQuantityException(message: String) : Exception(message)
-class InvalidFormatException(message: String) : Exception(message)
 class MaximumMenusExceededException(message: String) : Exception(message)
 class DrinksOnlyException(message: String) : Exception(message)
 
@@ -19,6 +14,8 @@ fun isValidDate(input: String): Boolean {
     }
 }
 
+// Existing code for imports and declarations...
+
 fun receiveAndVerifyMenuAndQuantity(input: String): Pair<String, Int> {
     var validInput = false
     var menuName = ""
@@ -27,13 +24,12 @@ fun receiveAndVerifyMenuAndQuantity(input: String): Pair<String, Int> {
 
     while (!validInput) {
         val parts = mutableInput.split("-")
-
         if (parts.size == 2) {
-            menuName = parts[0].trim()
-            quantity = parts[1].trim().toIntOrNull() ?: 0
+            val result = extractMenuNameAndQuantity(parts)
+            menuName = result.first
+            quantity = result.second
 
-            if (quantity >= 1 && (appetizer.containsKey(menuName) || main.containsKey(menuName) ||
-                            dessert.containsKey(menuName) || drink.containsKey(menuName))) {
+            if (isValidOrder(menuName, quantity)) {
                 validInput = true
             } else {
                 println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
@@ -43,15 +39,37 @@ fun receiveAndVerifyMenuAndQuantity(input: String): Pair<String, Int> {
         }
 
         if (!validInput) {
-            val newInput = Console.readLine()
-            if (newInput.isNotBlank()) {
-                mutableInput = newInput
-            }
+            mutableInput = getInputFromUser()
         }
     }
 
     return menuName to quantity
 }
+
+fun extractMenuNameAndQuantity(parts: List<String>): Pair<String, Int> {
+    val menuName = parts[0].trim()
+    val quantity = parts[1].trim().toIntOrNull() ?: 0
+    return menuName to quantity
+}
+
+fun isValidOrder(menuName: String, quantity: Int): Boolean {
+    return quantity >= 1 && (appetizer.containsKey(menuName) || main.containsKey(menuName) ||
+            dessert.containsKey(menuName) || drink.containsKey(menuName))
+}
+
+fun getInputFromUser(): String {
+    val newInput = Console.readLine()
+    return if (newInput.isNotBlank()) {
+        newInput
+    } else {
+        // Handle the case where the input is blank, possibly by asking the user again.
+        // You can customize this part as needed.
+        getInputFromUser()
+    }
+}
+
+// Rest of the code...
+
 
 val appetizer = mapOf("양송이수프" to 6000, "타파스" to 5500, "시저샐러드" to 8000)
 val main = mapOf("티본스테이크" to 55000, "바비큐립" to 54000, "해산물파스타" to 35000, "크리스마스파스타" to 25000)
@@ -62,11 +80,29 @@ val days = listOf("목", "금", "토", "일", "월", "화", "수")
 
 val benefitsDetails = mutableMapOf<String, Int>()
 
-fun main() {
+// Existing code for imports and declarations...
 
+fun main() {
     println("안녕하세요! 우테코 식당 12월 이벤트 플래너입니다.\n" +
             "12월 중 식당 예상 방문 날짜는 언제인가요? (숫자만 입력해 주세요!)")
 
+    val date = getValidDate()
+
+    println("주문하실 메뉴를 메뉴와 개수를 알려 주세요. (e.g. 해산물파스타-2,레드와인-1,초코케이크-1)")
+
+    val inputMenu = Console.readLine()
+    val orderedItems = getOrderDetails(inputMenu)
+
+    checkOrderValidity(orderedItems)
+
+    val currentDate = date.toInt()
+    val totalAmount = calculateTotalAmount(orderedItems, appetizer, main, dessert, drink)
+    val discountedTotalAmount = applyDiscounts(currentDate, totalAmount, days, orderedItems)
+
+    printOrderSummary(date, orderedItems, totalAmount, discountedTotalAmount)
+}
+
+fun getValidDate(): String {
     var validDate = false
     var date: String
 
@@ -81,41 +117,42 @@ fun main() {
 
     } while (!validDate)
 
-    println("주문하실 메뉴를 메뉴와 개수를 알려 주세요. (e.g. 해산물파스타-2,레드와인-1,초코케이크-1)")
+    return date
+}
 
-    val inputMenu = Console.readLine()
+fun getOrderDetails(inputMenu: String): Map<String, Int> {
     val menuItems = inputMenu.split(",")
     val orderedItems = mutableMapOf<String, Int>()
-    var totalMenusOrdered = 0
 
     for (menuItem in menuItems) {
         val (menuName, quantity) = receiveAndVerifyMenuAndQuantity(menuItem)
         orderedItems[menuName] = quantity
-        totalMenusOrdered += quantity
     }
 
+    return orderedItems
+}
+
+fun checkOrderValidity(orderedItems: Map<String, Int>) {
     if (orderedItems.all { drink.containsKey(it.key) } && orderedItems.isNotEmpty()) {
         throw DrinksOnlyException("[ERROR] You can't just order drinks")
     }
 
-    if (totalMenusOrdered > 20) {
+    if (orderedItems.values.sum() > 20) {
         throw MaximumMenusExceededException("Only up to 20 menus can be ordered. [ERROR]")
     }
+}
 
-    val currentDate = date.toInt()
-    val totalAmount = calculateTotalAmount(orderedItems, appetizer, main, dessert, drink)
-    val discountedTotalAmount = applyDiscounts(currentDate, totalAmount, days, orderedItems)
-
+fun printOrderSummary(date: String, orderedItems: Map<String, Int>, totalAmount: Int, discountedTotalAmount: Int) {
     val numberFormat = NumberFormat.getNumberInstance(Locale("en")) // Use Locale for comma formatting
     val formattedTotalAmount = numberFormat.format(totalAmount)
     val formattedDiscountedTotalAmount = numberFormat.format(discountedTotalAmount)
 
-    println("12월 ${date}일에 우테코 식당에서 받을 이벤트 혜택 미리 보기!\n")
+    println("12월 $date 일에 우테코 식당에서 받을 이벤트 혜택 미리 보기!\n")
     println("<주문 메뉴>")
     for ((menuName, quantity) in orderedItems) {
-        println("${menuName} ${quantity}개")
+        println("$menuName $quantity 개")
     }
-    println("\n<할인 전 총주문 금액>\n${formattedTotalAmount}원")
+    println("\n<할인 전 총주문 금액>\n$formattedTotalAmount 원")
 
     val giftMenu = if (totalAmount >= 120000) {
         "샴페인 1개"
@@ -130,40 +167,44 @@ fun main() {
 
     println("\n<혜택 내역>")
     var totalBenefitAmount = 0
-    if (benefitsDetails.size == 0) {
+    if (benefitsDetails.isEmpty()) {
         println("없음")
-    }
-    else {
+    } else {
         for ((benefitName, benefitAmount) in benefitsDetails) {
             val formattedBenefitAmount = NumberFormat.getNumberInstance(Locale("en")).format(benefitAmount)
             totalBenefitAmount += benefitAmount
-            println("${benefitName}: -${formattedBenefitAmount}원")
+            println("$benefitName: -$formattedBenefitAmount 원")
         }
     }
 
     println("\n<총혜택 금액>")
     val formattedTotalBenefitAmount = NumberFormat.getNumberInstance(Locale("en")).format(totalBenefitAmount)
     if (totalBenefitAmount == 0)
-        println("0원")
+        println("0 원")
     else
-        println("-${formattedTotalBenefitAmount}원")
+        println("-$formattedTotalBenefitAmount 원")
 
-    var Badge = ""
-    if (totalBenefitAmount >= 20000)
-        Badge = "산타"
-    else if (totalBenefitAmount >= 10000)
-        Badge = "트리"
-    else if (totalBenefitAmount >= 5000)
-        Badge = "별"
-
-    println("\n<할인 후 예상 결제 금액>\n${formattedDiscountedTotalAmount}원")
+    val badge = determineBadge(totalBenefitAmount)
+    println("\n<할인 후 예상 결제 금액>\n$formattedDiscountedTotalAmount 원")
 
     println("\n<12월 이벤트 배지>")
-    if (Badge == "")
+    if (badge.isEmpty())
         println("없음")
     else
-        println(Badge)
+        println(badge)
 }
+
+fun determineBadge(totalBenefitAmount: Int): String {
+    return when {
+        totalBenefitAmount >= 20000 -> "산타"
+        totalBenefitAmount >= 10000 -> "트리"
+        totalBenefitAmount >= 5000 -> "별"
+        else -> ""
+    }
+}
+
+// Rest of the code...
+
 
 fun calculateTotalAmount(orderedItems: Map<String, Int>, appetizer: Map<String, Int>, main: Map<String, Int>, dessert: Map<String, Int>, drink: Map<String, Int>): Int {
     var totalAmount = 0
@@ -182,43 +223,55 @@ fun calculateTotalAmount(orderedItems: Map<String, Int>, appetizer: Map<String, 
 
 fun applyDiscounts(currentDate: Int, totalAmount: Int, days: List<String>, orderedItems: Map<String, Int>): Int {
     val isWeekend = (currentDate % 7 == days.indexOf("금") || currentDate % 7 == days.indexOf("토"))
+    val additionalDiscount = calculateAdditionalDiscount(isWeekend, orderedItems)
+    val christmasDayDiscount = calculateChristmasDayDiscount(currentDate)
+    val specialDiscount = calculateSpecialDiscount(currentDate)
+
+    val totalDiscount = calculateTotalDiscount(totalAmount, christmasDayDiscount, additionalDiscount, specialDiscount)
+
+    return totalAmount - totalDiscount
+}
+
+fun calculateAdditionalDiscount(isWeekend: Boolean, orderedItems: Map<String, Int>): Int {
     var additionalDiscount = 0
 
-    // Check for weekend discount
     if (isWeekend) {
         val mainMenusCount = orderedItems.filter { main.containsKey(it.key) }.values.sum()
         additionalDiscount = 2023 * mainMenusCount
-        if (additionalDiscount > 0)
+        if (additionalDiscount > 0) {
             benefitsDetails["주말 할인"] = additionalDiscount
+        }
     } else {
         val dessertMenusCount = orderedItems.filter { dessert.containsKey(it.key) }.values.sum()
         additionalDiscount = 2023 * dessertMenusCount
-        if (additionalDiscount > 0)
+        if (additionalDiscount > 0) {
             benefitsDetails["평일 할인"] = additionalDiscount
+        }
     }
 
-    val christmasDayDiscount = if (currentDate in 1..25) {
+    return additionalDiscount
+}
+
+fun calculateChristmasDayDiscount(currentDate: Int): Int {
+    return if (currentDate in 1..25) {
         1000 + (currentDate - 1) * 100
     } else {
         0
     }
-    if (christmasDayDiscount > 0)
-        benefitsDetails["크리스마스 디데이 할인"] = christmasDayDiscount
+}
 
-    // Check for special discount
-    val specialDiscount = if (currentDate % 7 == 3 || currentDate == 25) {
+fun calculateSpecialDiscount(currentDate: Int): Int {
+    return if (currentDate % 7 == 3 || currentDate == 25) {
         1000
     } else {
         0
     }
-    if (specialDiscount > 0)
-        benefitsDetails["특별 할인"] = specialDiscount
+}
 
-    val totalDiscount = if (totalAmount > 10000) {
+fun calculateTotalDiscount(totalAmount: Int, christmasDayDiscount: Int, additionalDiscount: Int, specialDiscount: Int): Int {
+    return if (totalAmount > 10000) {
         christmasDayDiscount + additionalDiscount + specialDiscount
     } else {
         0
     }
-
-    return totalAmount - totalDiscount
 }
