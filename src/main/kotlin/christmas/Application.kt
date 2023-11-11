@@ -126,7 +126,9 @@ fun main() {
         println("${benefitName}: -${formattedBenefitAmount}원")
     }
 
-
+    println("\n<총혜택 금액>")
+    val formattedTotalBenefitAmount = NumberFormat.getNumberInstance(Locale("en")).format(totalBenefitAmount)
+    println("-${formattedTotalBenefitAmount}원")
 
     println("\n<할인 후 예상 결제 금액>\n${formattedDiscountedTotalAmount}원")
 }
