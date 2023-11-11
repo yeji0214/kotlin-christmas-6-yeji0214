@@ -40,7 +40,7 @@ fun main() {
         date = Console.readLine()
 
         if (!isValidDate(date)) {
-            throw InvalidDateException("[ERROR] Invalid date. Please re-enter.")
+            throw InvalidDateException("[ERROR] 유효하지 않은 날짜입니다. 다시 입력해 주세요.")
         } else {
             validDate = true
         }
@@ -65,22 +65,22 @@ fun main() {
                     if (appetizer.containsKey(menuName) || main.containsKey(menuName) ||
                             dessert.containsKey(menuName) || drink.containsKey(menuName)) {
                         if (orderedItems.containsKey(menuName)) {
-                            throw DuplicateMenuException("[ERROR] Duplicate menu")
+                            throw DuplicateMenuException("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
                         } else {
                             orderedItems[menuName] = quantity
                             totalMenusOrdered += quantity
                         }
                     } else {
-                        throw InvalidMenuException("[ERROR] Invalid menu: $menuName")
+                        throw InvalidMenuException("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
                     }
                 } else {
-                    throw InvalidQuantityException("[ERROR] Quantity less than 1 for: $menuName")
+                    throw InvalidQuantityException("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
                 }
             } else {
-                throw InvalidFormatException("[ERROR] Invalid format: $menuItem")
+                throw InvalidFormatException("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
             }
         } else {
-            throw InvalidFormatException("[ERROR] Invalid format: $menuItem")
+            throw InvalidFormatException("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
         }
     }
 
@@ -120,17 +120,39 @@ fun main() {
 
     println("\n<혜택 내역>")
     var totalBenefitAmount = 0
-    for ((benefitName, benefitAmount) in benefitsDetails) {
-        val formattedBenefitAmount = NumberFormat.getNumberInstance(Locale("en")).format(benefitAmount)
-        totalBenefitAmount += benefitAmount
-        println("${benefitName}: -${formattedBenefitAmount}원")
+    if (benefitsDetails.size == 0) {
+        println("없음")
+    }
+    else {
+        for ((benefitName, benefitAmount) in benefitsDetails) {
+            val formattedBenefitAmount = NumberFormat.getNumberInstance(Locale("en")).format(benefitAmount)
+            totalBenefitAmount += benefitAmount
+            println("${benefitName}: -${formattedBenefitAmount}원")
+        }
     }
 
     println("\n<총혜택 금액>")
     val formattedTotalBenefitAmount = NumberFormat.getNumberInstance(Locale("en")).format(totalBenefitAmount)
-    println("-${formattedTotalBenefitAmount}원")
+    if (totalBenefitAmount == 0)
+        println("0원")
+    else
+        println("-${formattedTotalBenefitAmount}원")
+
+    var Badge = ""
+    if (totalBenefitAmount >= 20000)
+        Badge = "산타"
+    else if (totalBenefitAmount >= 10000)
+        Badge = "트리"
+    else if (totalBenefitAmount >= 5000)
+        Badge = "별"
 
     println("\n<할인 후 예상 결제 금액>\n${formattedDiscountedTotalAmount}원")
+
+    println("\n<12월 이벤트 배지>")
+    if (Badge == "")
+        println("없음")
+    else
+        println(Badge)
 }
 
 fun calculateTotalAmount(orderedItems: Map<String, Int>, appetizer: Map<String, Int>, main: Map<String, Int>, dessert: Map<String, Int>, drink: Map<String, Int>): Int {
