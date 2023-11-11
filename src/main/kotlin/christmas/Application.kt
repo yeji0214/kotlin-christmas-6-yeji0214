@@ -25,6 +25,9 @@ val dessert = mapOf("초코케이크" to 15000, "아이스크림" to 5000)
 val drink = mapOf("제로콜라" to 3000, "레드와인" to 60000, "샴페인" to 25000)
 
 val days = listOf("목", "금", "토", "일", "월", "화", "수")
+
+val benefitsDetails = mutableMapOf<String, Int>()
+
 fun main() {
 
     println("안녕하세요! 우테코 식당 12월 이벤트 플래너입니다.\n" +
@@ -110,7 +113,20 @@ fun main() {
         "없음"
     }
 
+    if (giftMenu == "샴페인 1개") {
+        benefitsDetails["증정 이벤트"] = 25000
+    }
     println("\n<증정 메뉴>\n$giftMenu")
+
+    println("\n<혜택 내역>")
+    var totalBenefitAmount = 0
+    for ((benefitName, benefitAmount) in benefitsDetails) {
+        val formattedBenefitAmount = NumberFormat.getNumberInstance(Locale("en")).format(benefitAmount)
+        totalBenefitAmount += benefitAmount
+        println("${benefitName}: -${formattedBenefitAmount}원")
+    }
+
+
 
     println("\n<할인 후 예상 결제 금액>\n${formattedDiscountedTotalAmount}원")
 }
@@ -138,9 +154,13 @@ fun applyDiscounts(currentDate: Int, totalAmount: Int, days: List<String>, order
     if (isWeekend) {
         val mainMenusCount = orderedItems.filter { main.containsKey(it.key) }.values.sum()
         additionalDiscount = 2023 * mainMenusCount
+        if (additionalDiscount > 0)
+            benefitsDetails["주말 할인"] = additionalDiscount
     } else {
         val dessertMenusCount = orderedItems.filter { dessert.containsKey(it.key) }.values.sum()
         additionalDiscount = 2023 * dessertMenusCount
+        if (additionalDiscount > 0)
+            benefitsDetails["평일 할인"] = additionalDiscount
     }
 
     val christmasDayDiscount = if (currentDate in 1..25) {
@@ -148,6 +168,8 @@ fun applyDiscounts(currentDate: Int, totalAmount: Int, days: List<String>, order
     } else {
         0
     }
+    if (christmasDayDiscount > 0)
+        benefitsDetails["크리스마스 디데이 할인"] = christmasDayDiscount
 
     // Check for special discount
     val specialDiscount = if (currentDate % 7 == 3 || currentDate == 25) {
@@ -155,6 +177,8 @@ fun applyDiscounts(currentDate: Int, totalAmount: Int, days: List<String>, order
     } else {
         0
     }
+    if (specialDiscount > 0)
+        benefitsDetails["특별 할인"] = specialDiscount
 
     val totalDiscount = if (totalAmount > 10000) {
         christmasDayDiscount + additionalDiscount + specialDiscount
