@@ -19,6 +19,40 @@ fun isValidDate(input: String): Boolean {
     }
 }
 
+fun receiveAndVerifyMenuAndQuantity(input: String): Pair<String, Int> {
+    var validInput = false
+    var menuName = ""
+    var quantity = 0
+    var mutableInput = input
+
+    while (!validInput) {
+        val parts = mutableInput.split("-")
+
+        if (parts.size == 2) {
+            menuName = parts[0].trim()
+            quantity = parts[1].trim().toIntOrNull() ?: 0
+
+            if (quantity >= 1 && (appetizer.containsKey(menuName) || main.containsKey(menuName) ||
+                            dessert.containsKey(menuName) || drink.containsKey(menuName))) {
+                validInput = true
+            } else {
+                println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
+            }
+        } else {
+            println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
+        }
+
+        if (!validInput) {
+            val newInput = Console.readLine()
+            if (newInput.isNotBlank()) {
+                mutableInput = newInput
+            }
+        }
+    }
+
+    return menuName to quantity
+}
+
 val appetizer = mapOf("양송이수프" to 6000, "타파스" to 5500, "시저샐러드" to 8000)
 val main = mapOf("티본스테이크" to 55000, "바비큐립" to 54000, "해산물파스타" to 35000, "크리스마스파스타" to 25000)
 val dessert = mapOf("초코케이크" to 15000, "아이스크림" to 5000)
@@ -40,7 +74,7 @@ fun main() {
         date = Console.readLine()
 
         if (!isValidDate(date)) {
-            throw InvalidDateException("[ERROR] 유효하지 않은 날짜입니다. 다시 입력해 주세요.")
+            println("[ERROR] 유효하지 않은 날짜입니다. 다시 입력해 주세요.")
         } else {
             validDate = true
         }
@@ -55,33 +89,9 @@ fun main() {
     var totalMenusOrdered = 0
 
     for (menuItem in menuItems) {
-        val parts = menuItem.split("-")
-        if (parts.size == 2) {
-            val menuName = parts[0].trim()
-            val quantity = parts[1].trim().toIntOrNull()
-
-            if (quantity != null) {
-                if (quantity >= 1) {
-                    if (appetizer.containsKey(menuName) || main.containsKey(menuName) ||
-                            dessert.containsKey(menuName) || drink.containsKey(menuName)) {
-                        if (orderedItems.containsKey(menuName)) {
-                            throw DuplicateMenuException("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
-                        } else {
-                            orderedItems[menuName] = quantity
-                            totalMenusOrdered += quantity
-                        }
-                    } else {
-                        throw InvalidMenuException("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
-                    }
-                } else {
-                    throw InvalidQuantityException("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
-                }
-            } else {
-                throw InvalidFormatException("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
-            }
-        } else {
-            throw InvalidFormatException("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
-        }
+        val (menuName, quantity) = receiveAndVerifyMenuAndQuantity(menuItem)
+        orderedItems[menuName] = quantity
+        totalMenusOrdered += quantity
     }
 
     if (orderedItems.all { drink.containsKey(it.key) } && orderedItems.isNotEmpty()) {
