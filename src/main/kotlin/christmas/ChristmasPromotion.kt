@@ -6,6 +6,8 @@ import days
 
 class ChristmasPromotion {
     private val orderProcessing = OrderProcessing()
+    private val menuPriceCalculator = MenuPriceCalculator()
+    private val discountCalculator = DiscountCalculator()
 
     fun start() {
         println(MessageConstants.WELCOME_MESSAGE)
@@ -20,8 +22,8 @@ class ChristmasPromotion {
         orderProcessing.checkOrderValidity(orderedItems)
 
         val currentDate = date.toInt()
-        val totalAmount = orderProcessing.calculateTotalAmount(orderedItems)
-        val discountedTotalAmount = orderProcessing.applyDiscounts(currentDate, totalAmount, days, orderedItems)
+        val totalAmount = menuPriceCalculator.calculateTotalAmount(orderedItems)
+        val discountedTotalAmount = discountCalculator.applyDiscounts(currentDate, totalAmount, days, orderedItems)
 
         orderProcessing.printOrderSummary(date, orderedItems, totalAmount, discountedTotalAmount)
     }
