@@ -1,4 +1,5 @@
 import camp.nextstep.edu.missionutils.Console
+import christmas.MessageConstants
 import java.text.NumberFormat
 import java.util.*
 
@@ -18,14 +19,14 @@ fun calculateTotalAmount(orderedItems: Map<String, Int>): Int {
 }
 
 fun applyDiscounts(currentDate: Int, totalAmount: Int, days: List<String>, orderedItems: Map<String, Int>): Int {
-    val isWeekend = (currentDate % 7 == days.indexOf("금") || currentDate % 7 == days.indexOf("토"))
+    val isWeekend = (currentDate % 7 == days.indexOf(MessageConstants.FRI) || currentDate % 7 == days.indexOf(MessageConstants.SAT))
     val additionalDiscount = calculateAdditionalDiscount(isWeekend, orderedItems)
     val christmasDayDiscount = calculateChristmasDayDiscount(currentDate)
     if (christmasDayDiscount > 0)
-        benefitsDetails["크리스마스 디데이 할인"] = christmasDayDiscount
+        benefitsDetails[MessageConstants.CHRISTMAS_DDAY_SALE] = christmasDayDiscount
     val specialDiscount = calculateSpecialDiscount(currentDate)
     if (specialDiscount > 0)
-        benefitsDetails["특별 할인"] = specialDiscount
+        benefitsDetails[MessageConstants.SPECIAL_SALE] = specialDiscount
     val totalDiscount = calculateTotalDiscount(totalAmount, christmasDayDiscount, additionalDiscount, specialDiscount)
 
     return totalAmount - totalDiscount
@@ -38,13 +39,13 @@ fun calculateAdditionalDiscount(isWeekend: Boolean, orderedItems: Map<String, In
         val mainMenusCount = orderedItems.filter { main.containsKey(it.key) }.values.sum()
         additionalDiscount = 2023 * mainMenusCount
         if (additionalDiscount > 0) {
-            benefitsDetails["주말 할인"] = additionalDiscount
+            benefitsDetails[MessageConstants.WEEKEND_SALE] = additionalDiscount
         }
     } else {
         val dessertMenusCount = orderedItems.filter { dessert.containsKey(it.key) }.values.sum()
         additionalDiscount = 2023 * dessertMenusCount
         if (additionalDiscount > 0) {
-            benefitsDetails["평일 할인"] = additionalDiscount
+            benefitsDetails[MessageConstants.WEEKDAY_SALE] = additionalDiscount
         }
     }
 
@@ -83,7 +84,7 @@ fun getValidDate(): String {
         date = Console.readLine()
 
         if (!isValidDate(date)) {
-            println("[ERROR] 유효하지 않은 날짜입니다. 다시 입력해 주세요.")
+            println(MessageConstants.ERROR_INVALID_DATE)
         } else {
             validDate = true
         }
@@ -107,19 +108,19 @@ fun getOrderDetails(inputMenu: String): Map<String, Int> {
 
 fun checkOrderValidity(orderedItems: Map<String, Int>) {
     if (orderedItems.all { drink.containsKey(it.key) } && orderedItems.isNotEmpty()) {
-        throw DrinksOnlyException("[ERROR] You can't just order drinks")
+        throw DrinksOnlyException(MessageConstants.ERROR_JUST_ORDER_DRINK)
     }
 
     if (orderedItems.values.sum() > 20) {
-        throw MaximumMenusExceededException("Only up to 20 menus can be ordered. [ERROR]")
+        throw MaximumMenusExceededException(MessageConstants.ERROR_MORE_THAN_20_MENUS)
     }
 }
 
 fun determineBadge(totalBenefitAmount: Int): String {
     return when {
-        totalBenefitAmount >= 20000 -> "산타"
-        totalBenefitAmount >= 10000 -> "트리"
-        totalBenefitAmount >= 5000 -> "별"
+        totalBenefitAmount >= 20000 -> MessageConstants.SANTA
+        totalBenefitAmount >= 10000 -> MessageConstants.TREE
+        totalBenefitAmount >= 5000 -> MessageConstants.STAR
         else -> ""
     }
 }
@@ -129,49 +130,49 @@ fun printOrderSummary(date: String, orderedItems: Map<String, Int>, totalAmount:
     val formattedTotalAmount = numberFormat.format(totalAmount)
     val formattedDiscountedTotalAmount = numberFormat.format(discountedTotalAmount)
 
-    println("12월 $date 일에 우테코 식당에서 받을 이벤트 혜택 미리 보기!\n")
-    println("<주문 메뉴>")
+    println("${MessageConstants.EVENT_MESSAGE_START}${date}${MessageConstants.EVENT_MESSAGE_END}")
+    println(MessageConstants.ORDER_MENU)
     for ((menuName, quantity) in orderedItems) {
-        println("$menuName $quantity 개")
+        println("${menuName} ${quantity}${MessageConstants.UNIT}")
     }
-    println("\n<할인 전 총주문 금액>\n$formattedTotalAmount 원")
+    println("\n${MessageConstants.TOTAL_ORDER_AMOUNT_BEFORE_DISCOUNT}\n${formattedTotalAmount}${MessageConstants.WON}")
 
     val giftMenu = if (totalAmount >= 120000) {
-        "샴페인 1개"
+        MessageConstants.ONE_CHAMPAGNE
     } else {
-        "없음"
+        MessageConstants.NONE
     }
 
-    if (giftMenu == "샴페인 1개") {
-        benefitsDetails["증정 이벤트"] = 25000
+    if (giftMenu == MessageConstants.ONE_CHAMPAGNE) {
+        benefitsDetails[MessageConstants.GIFT_EVENT] = 25000
     }
-    println("\n<증정 메뉴>\n$giftMenu")
+    println("\n${MessageConstants.GIFT_MENU}\n$giftMenu")
 
-    println("\n<혜택 내역>")
+    println("\n${MessageConstants.BENEFITS_DETAILS}")
     var totalBenefitAmount = 0
     if (benefitsDetails.isEmpty()) {
-        println("없음")
+        println(MessageConstants.NONE)
     } else {
         for ((benefitName, benefitAmount) in benefitsDetails) {
             val formattedBenefitAmount = NumberFormat.getNumberInstance(Locale("en")).format(benefitAmount)
             totalBenefitAmount += benefitAmount
-            println("$benefitName: -$formattedBenefitAmount 원")
+            println("${benefitName}: -${formattedBenefitAmount}${MessageConstants.WON}")
         }
     }
 
-    println("\n<총혜택 금액>")
+    println("\n${MessageConstants.TOTAL_BENEFIT_AMOUNT}")
     val formattedTotalBenefitAmount = NumberFormat.getNumberInstance(Locale("en")).format(totalBenefitAmount)
     if (totalBenefitAmount == 0)
-        println("0 원")
+        println(MessageConstants.ZERO_WON)
     else
-        println("-$formattedTotalBenefitAmount 원")
+        println("-${formattedTotalBenefitAmount}${MessageConstants.WON}")
 
     val badge = determineBadge(totalBenefitAmount)
-    println("\n<할인 후 예상 결제 금액>\n$formattedDiscountedTotalAmount 원")
+    println("\n${MessageConstants.ESTIMATED_PAYMENT_AMOUNT_AFTER_DISCOUNT}\n${formattedDiscountedTotalAmount}${MessageConstants.WON}")
 
-    println("\n<12월 이벤트 배지>")
+    println("\n${MessageConstants.DECEMBER_EVENT_BADGE}")
     if (badge.isEmpty())
-        println("없음")
+        println(MessageConstants.NONE)
     else
         println(badge)
 }

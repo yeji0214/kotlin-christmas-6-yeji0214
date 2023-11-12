@@ -1,4 +1,5 @@
 import camp.nextstep.edu.missionutils.Console
+import christmas.MessageConstants
 
 class MaximumMenusExceededException(message: String) : Exception(message)
 class DrinksOnlyException(message: String) : Exception(message)
@@ -28,10 +29,10 @@ fun receiveAndVerifyMenuAndQuantity(input: String): Pair<String, Int> {
             if (isValidOrder(menuName, quantity)) {
                 validInput = true
             } else {
-                println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
+                println(MessageConstants.ERROR_INVALID_ORDER)
             }
         } else {
-            println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
+            println(MessageConstants.ERROR_INVALID_ORDER)
         }
 
         if (!validInput) {
