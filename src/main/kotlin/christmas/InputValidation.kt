@@ -1,20 +1,19 @@
-import camp.nextstep.edu.missionutils.Console
-import christmas.MessageConstants
+package christmas
 
 class MaximumMenusExceededException(message: String) : Exception(message)
 class DrinksOnlyException(message: String) : Exception(message)
 
 class InputValidation {
+    private val dateValidator = DateValidator()
+    private val menuValidator = MenuValidator()
+    private val userInputReader = UserInputReader()
+
     fun isValidDate(input: String): Boolean {
-        try {
-            val date = input.toInt()
-            return date in 1..31
-        } catch (e: NumberFormatException) {
-            return false
-        }
+        return dateValidator.isValidDate(input)
     }
 
     fun receiveAndVerifyMenuAndQuantity(input: String): Pair<String, Int> {
+        // Delegate to the MenuValidator
         var validInput = false
         var menuName = ""
         var quantity = 0
@@ -23,11 +22,11 @@ class InputValidation {
         while (!validInput) {
             val parts = mutableInput.split("-")
             if (parts.size == 2) {
-                val result = extractMenuNameAndQuantity(parts)
+                val result = menuValidator.extractMenuNameAndQuantity(parts)
                 menuName = result.first
                 quantity = result.second
 
-                if (isValidOrder(menuName, quantity)) {
+                if (menuValidator.isValidOrder(menuName, quantity)) {
                     validInput = true
                 } else {
                     println(MessageConstants.ERROR_INVALID_ORDER)
@@ -37,31 +36,10 @@ class InputValidation {
             }
 
             if (!validInput) {
-                mutableInput = getInputFromUser()
+                mutableInput = userInputReader.getInputFromUser()
             }
         }
 
         return menuName to quantity
-    }
-
-    fun extractMenuNameAndQuantity(parts: List<String>): Pair<String, Int> {
-        val menuName = parts[0].trim()
-        val quantity = parts[1].trim().toIntOrNull() ?: 0
-        return menuName to quantity
-    }
-
-    fun isValidOrder(menuName: String, quantity: Int): Boolean {
-        return quantity >= 1 && (appetizer.containsKey(menuName) || main.containsKey(menuName) ||
-                dessert.containsKey(menuName) || drink.containsKey(menuName))
-    }
-
-    fun getInputFromUser(): String {
-        val newInput = Console.readLine()
-        return if (newInput.isNotBlank()) {
-            newInput
-        } else {
-            // Handle the case where the input is blank, possibly by asking the user again.
-            getInputFromUser()
-        }
     }
 }

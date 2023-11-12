@@ -1,6 +1,5 @@
 package christmas
 
-import InputValidation
 import OrderProcessing
 import camp.nextstep.edu.missionutils.Console
 import days
