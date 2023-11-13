@@ -4,10 +4,6 @@ import java.text.NumberFormat
 import java.util.*
 
 class OrderProcessing {
-    private val dateValidator = DateValidator()
-    private val menuPriceCalculator = MenuPriceCalculator()
-    private val discountCalculator = DiscountCalculator()
-    private val userInputReader = UserInputReader()
     private val inputValidation = InputValidation()
 
     fun getValidDate(): String {

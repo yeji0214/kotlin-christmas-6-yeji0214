@@ -9,19 +9,19 @@ class DiscountCalculator {
 
     fun applyDiscounts(currentDate: Int, totalAmount: Int, days: List<String>, orderedItems: Map<String, Int>): Int {
         val isWeekend = (currentDate % 7 == days.indexOf(MessageConstants.FRI) || currentDate % 7 == days.indexOf(MessageConstants.SAT))
-        val additionalDiscount = calculateAdditionalDiscount(isWeekend, orderedItems)
+        val weekdayOrWeekendDiscount = calculateWeekdayOrWeekendDiscount(isWeekend, orderedItems)
         val christmasDayDiscount = calculateChristmasDayDiscount(currentDate)
         if (christmasDayDiscount > 0)
             benefitsDetails[MessageConstants.CHRISTMAS_DDAY_SALE] = christmasDayDiscount
         val specialDiscount = calculateSpecialDiscount(currentDate)
         if (specialDiscount > 0)
             benefitsDetails[MessageConstants.SPECIAL_SALE] = specialDiscount
-        val totalDiscount = calculateTotalDiscount(totalAmount, christmasDayDiscount, additionalDiscount, specialDiscount)
+        val totalDiscount = calculateTotalDiscount(totalAmount, christmasDayDiscount, weekdayOrWeekendDiscount, specialDiscount)
 
         return totalAmount - totalDiscount
     }
 
-    fun calculateAdditionalDiscount(isWeekend: Boolean, orderedItems: Map<String, Int>): Int {
+    fun calculateWeekdayOrWeekendDiscount(isWeekend: Boolean, orderedItems: Map<String, Int>): Int {
         var additionalDiscount = 0
 
         if (isWeekend) {
@@ -57,9 +57,9 @@ class DiscountCalculator {
         }
     }
 
-    fun calculateTotalDiscount(totalAmount: Int, christmasDayDiscount: Int, additionalDiscount: Int, specialDiscount: Int): Int {
+    fun calculateTotalDiscount(totalAmount: Int, christmasDayDiscount: Int, weekdayOrWeekendDiscount: Int, specialDiscount: Int): Int {
         return if (totalAmount > 10000) {
-            christmasDayDiscount + additionalDiscount + specialDiscount
+            christmasDayDiscount + weekdayOrWeekendDiscount + specialDiscount
         } else {
             0
         }
