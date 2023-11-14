@@ -37,14 +37,33 @@ class OrderProcessing {
     }
 
     fun checkOrderValidity(orderedItems: Map<String, Int>) {
-        if (orderedItems.all { drink.containsKey(it.key) } && orderedItems.isNotEmpty()) {
-            throw DrinksOnlyException(MessageConstants.ERROR_JUST_ORDER_DRINK)
-        }
+        var validOrder = false
 
-        if (orderedItems.values.sum() > 20) {
-            throw MaximumMenusExceededException(MessageConstants.ERROR_MORE_THAN_20_MENUS)
-        }
+        do {
+            try {
+                if (orderedItems.all { drink.containsKey(it.key) } && orderedItems.isNotEmpty()) {
+                    throw DrinksOnlyException(MessageConstants.ERROR_JUST_ORDER_DRINK)
+                }
+
+                if (orderedItems.values.sum() > 20) {
+                    throw MaximumMenusExceededException(MessageConstants.ERROR_MORE_THAN_20_MENUS)
+                }
+
+                validOrder = true
+            } catch (e: DrinksOnlyException) {
+                println(MessageConstants.ERROR_INVALID_ORDER)
+                val inputMenu = Console.readLine()
+                val newOrderedItems = getOrderDetails(inputMenu)
+                checkOrderValidity(newOrderedItems)
+            } catch (e: MaximumMenusExceededException) {
+                println(MessageConstants.ERROR_INVALID_ORDER)
+                val inputMenu = Console.readLine()
+                val newOrderedItems = getOrderDetails(inputMenu)
+                checkOrderValidity(newOrderedItems)
+            }
+        } while (!validOrder)
     }
+
 
     fun determineBadge(totalBenefitAmount: Int): String {
         return when {
