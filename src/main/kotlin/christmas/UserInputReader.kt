@@ -8,7 +8,6 @@ class UserInputReader {
         return if (newInput.isNotBlank()) {
             newInput
         } else {
-            // Handle the case where the input is blank, possibly by asking the user again.
             getInputFromUser()
         }
     }

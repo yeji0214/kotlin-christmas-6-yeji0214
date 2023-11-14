@@ -5,7 +5,6 @@ import java.util.*
 
 class OrderProcessing {
     private val inputValidation = InputValidation()
-
     fun getValidDate(): String {
         var validDate = false
         var date: String
@@ -36,32 +35,18 @@ class OrderProcessing {
         return orderedItems
     }
 
-    fun checkOrderValidity(orderedItems: Map<String, Int>) {
-        var validOrder = false
+    fun checkOrderValidity(orderedItems: Map<String, Int>) : Boolean {
+        if (orderedItems.all { drink.containsKey(it.key) } && orderedItems.isNotEmpty()) {
+            println(MessageConstants.ERROR_INVALID_ORDER)
+            return false
+        }
 
-        do {
-            try {
-                if (orderedItems.all { drink.containsKey(it.key) } && orderedItems.isNotEmpty()) {
-                    throw DrinksOnlyException(MessageConstants.ERROR_JUST_ORDER_DRINK)
-                }
+        if (orderedItems.values.sum() > 20) {
+            println(MessageConstants.ERROR_INVALID_ORDER)
+            return false
+        }
 
-                if (orderedItems.values.sum() > 20) {
-                    throw MaximumMenusExceededException(MessageConstants.ERROR_MORE_THAN_20_MENUS)
-                }
-
-                validOrder = true
-            } catch (e: DrinksOnlyException) {
-                println(MessageConstants.ERROR_INVALID_ORDER)
-                val inputMenu = Console.readLine()
-                val newOrderedItems = getOrderDetails(inputMenu)
-                checkOrderValidity(newOrderedItems)
-            } catch (e: MaximumMenusExceededException) {
-                println(MessageConstants.ERROR_INVALID_ORDER)
-                val inputMenu = Console.readLine()
-                val newOrderedItems = getOrderDetails(inputMenu)
-                checkOrderValidity(newOrderedItems)
-            }
-        } while (!validOrder)
+        return true
     }
 
 

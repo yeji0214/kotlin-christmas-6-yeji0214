@@ -16,10 +16,17 @@ class ChristmasPromotion {
 
         println(MessageConstants.INPUT_MENUS)
 
-        val inputMenu = Console.readLine()
-        val orderedItems = orderProcessing.getOrderDetails(inputMenu)
+        var validOrder = false
+        var inputMenu = ""
+        var orderedItems: Map<String, Int> = mutableMapOf()
 
-        orderProcessing.checkOrderValidity(orderedItems)
+        while (!validOrder) {
+            inputMenu = Console.readLine()
+            orderedItems = orderProcessing.getOrderDetails(inputMenu)
+
+            validOrder = orderProcessing.checkOrderValidity(orderedItems)
+        }
+
 
         val currentDate = date.toInt()
         val totalAmount = menuPriceCalculator.calculateTotalAmount(orderedItems)

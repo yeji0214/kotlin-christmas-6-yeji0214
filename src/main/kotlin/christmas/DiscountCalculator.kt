@@ -5,8 +5,6 @@ import dessert
 import main
 
 class DiscountCalculator {
-    private val inputValidation = InputValidation()
-
     fun applyDiscounts(currentDate: Int, totalAmount: Int, days: List<String>, orderedItems: Map<String, Int>): Int {
         val isWeekend = (currentDate % 7 == days.indexOf(MessageConstants.FRI) || currentDate % 7 == days.indexOf(MessageConstants.SAT))
         val weekdayOrWeekendDiscount = calculateWeekdayOrWeekendDiscount(isWeekend, orderedItems)
