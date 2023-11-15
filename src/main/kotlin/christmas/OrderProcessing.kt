@@ -1,11 +1,11 @@
 package christmas
-import camp.nextstep.edu.missionutils.Console
 import java.text.NumberFormat
 import java.util.*
 
 class OrderProcessing {
     private val inputValidation = InputValidation()
     private var totalBenefitAmount = 0
+    private val inputView = InputView()
 
     fun getValidDate(): String {
         var validDate = false
@@ -13,7 +13,7 @@ class OrderProcessing {
 
         do {
             try {
-                date = Console.readLine()
+                date = inputView.readDate()
 
                 if (!inputValidation.isValidDate(date)) {
                     throw IllegalArgumentException(MessageConstants.ERROR_INVALID_DATE)

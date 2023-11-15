@@ -6,20 +6,18 @@ class ChristmasPromotion {
     private val orderProcessing = OrderProcessing()
     private val menuPriceCalculator = MenuPriceCalculator()
     private val discountCalculator = DiscountCalculator()
+    private val inputView = InputView()
 
     fun start() {
         println(MessageConstants.WELCOME_MESSAGE)
 
         val date = orderProcessing.getValidDate()
-
-        println(MessageConstants.INPUT_MENUS)
-
         var validOrder = false
         var inputMenu = ""
         var orderedItems: Map<String, Int> = mutableMapOf()
 
         while (!validOrder) {
-            inputMenu = Console.readLine()
+            inputMenu = inputView.readMenu()
             orderedItems = orderProcessing.getOrderDetails(inputMenu)
 
             validOrder = orderProcessing.checkOrderValidity(orderedItems)
