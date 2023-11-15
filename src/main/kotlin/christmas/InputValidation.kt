@@ -36,7 +36,6 @@ class InputValidation {
                     menuName = result.first,
                     quantity = result.second
             )
-
             if (menuValidator.isValidOrder(newMenuAndQuantity.menuName, newMenuAndQuantity.quantity)) {
                 newMenuAndQuantity
             } else {

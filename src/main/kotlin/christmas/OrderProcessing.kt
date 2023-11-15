@@ -6,16 +6,13 @@ class OrderProcessing {
     private val inputValidation = InputValidation()
     private var totalBenefitAmount = 0
     private val inputView = InputView()
-    private val outputView = OutputView()
 
     fun getValidDate(): String {
         var validDate = false
         var date: String = ""
-
         do {
             try {
                 date = inputView.readDate()
-
                 if (!inputValidation.isValidDate(date)) {
                     throw IllegalArgumentException(MessageConstants.ERROR_INVALID_DATE)
                 } else {
@@ -24,9 +21,7 @@ class OrderProcessing {
             } catch (e: IllegalArgumentException) {
                 println(e.message)
             }
-
         } while (!validDate)
-
         return date
     }
 
@@ -44,12 +39,10 @@ class OrderProcessing {
 
     fun checkOrderValidity(orderedItems: Map<String, Int>): Boolean {
         if (orderedItems.all { MenuData.drink.containsKey(it.key) } && orderedItems.isNotEmpty()) {
-            //println(MessageConstants.ERROR_INVALID_ORDER)
             return false
         }
 
         if (orderedItems.values.sum() > 20) {
-            //println(MessageConstants.ERROR_INVALID_ORDER)
             return false
         }
 
