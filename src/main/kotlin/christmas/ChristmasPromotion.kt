@@ -33,5 +33,7 @@ class ChristmasPromotion {
         val discountedTotalAmount = discountCalculator.applyDiscounts(currentDate, totalAmount, days, orderedItems)
 
         orderProcessing.printOrderSummary(date, orderedItems, totalAmount, discountedTotalAmount)
+
+        Console.close()
     }
 }
