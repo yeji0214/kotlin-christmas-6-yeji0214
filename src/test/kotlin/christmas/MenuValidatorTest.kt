@@ -1,5 +1,6 @@
 package christmas
 
+import OrderProcessing
 import camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest
 import camp.nextstep.edu.missionutils.test.NsTest
 import main
@@ -50,13 +51,37 @@ class MenuValidatorTest : NsTest() {
 
         assertEquals(true, menuValidator.isValidOrder("레드와인", 3))
     }
-//    @Test
-//    fun `메뉴 수량이 20보다 큰 경우`() {
-//        val menuValidator = MenuValidator()
-//
-//        assertEquals(false, menuValidator.isValidOrder("레드와인", 21))
-//    }
+    @Test
+    fun `메뉴 수량이 20보다 큰 경우 (여러개의 메뉴)`() {
+        val orderProcessing = OrderProcessing()
 
+        assertEquals(false, orderProcessing.checkOrderValidity(mapOf("레드와인" to 10, "크리스마스파스타" to 11)))
+    }
+
+    @Test
+    fun `메뉴 수량이 20보다 큰 경우 (단일 메뉴)`() {
+        val orderProcessing = OrderProcessing()
+
+        assertEquals(false, orderProcessing.checkOrderValidity(mapOf("크리스마스파스타" to 50)))
+    }
+
+    @Test
+    fun `정상 동작 (메뉴가 20개인 경우)`() {
+        val orderProcessing = OrderProcessing()
+
+        assertEquals(true, orderProcessing.checkOrderValidity(mapOf("타파스" to 5, "양송이수프" to 10, "아이스크림" to 5)))
+    }
+
+//    @Test
+//    fun `잘못된 형식이 입력된 경우`() {
+//        val inputValidation = InputValidation()
+//
+//        val exception = assertThrows<IllegalArgumentException> {
+//            inputValidation.receiveAndVerifyMenuAndQuantity("abc")
+//        }
+//
+//        assertEquals(MessageConstants.ERROR_INVALID_ORDER, exception.message)
+//    }
 
     override fun runMain() {
         main()

@@ -3,7 +3,7 @@ package christmas
 import appetizer
 import dessert
 import drink
-import main
+import mainMenu
 
 class MenuPriceCalculator {
     fun calculateTotalAmount(orderedItems: Map<String, Int>): Int {
@@ -11,7 +11,7 @@ class MenuPriceCalculator {
         for ((menuName, quantity) in orderedItems) {
             val price = when {
                 appetizer.containsKey(menuName) -> appetizer.getValue(menuName)
-                main.containsKey(menuName) -> main.getValue(menuName)
+                mainMenu.containsKey(menuName) -> mainMenu.getValue(menuName)
                 dessert.containsKey(menuName) -> dessert.getValue(menuName)
                 drink.containsKey(menuName) -> drink.getValue(menuName)
                 else -> 0

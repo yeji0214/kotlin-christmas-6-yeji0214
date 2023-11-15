@@ -2,7 +2,8 @@ package christmas
 
 import benefitsDetails
 import dessert
-import main
+import mainMenu
+
 
 class DiscountCalculator {
     fun applyDiscounts(currentDate: Int, totalAmount: Int, days: List<String>, orderedItems: Map<String, Int>): Int {
@@ -23,7 +24,7 @@ class DiscountCalculator {
         var additionalDiscount = 0
 
         if (isWeekend) {
-            val mainMenusCount = orderedItems.filter { main.containsKey(it.key) }.values.sum()
+            val mainMenusCount = orderedItems.filter { mainMenu.containsKey(it.key) }.values.sum()
             additionalDiscount = 2023 * mainMenusCount
             if (additionalDiscount > 0) {
                 benefitsDetails[MessageConstants.WEEKEND_SALE] = additionalDiscount

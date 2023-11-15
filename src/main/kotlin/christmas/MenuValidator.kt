@@ -1,15 +1,14 @@
 package christmas
 
-import OrderProcessing
 import appetizer
 import dessert
 import drink
-import main
+import mainMenu
 
 
 class MenuValidator {
     fun isValidOrder(menuName: String, quantity: Int): Boolean {
-        return quantity >= 1 && (appetizer.containsKey(menuName) || main.containsKey(menuName) ||
+        return quantity >= 1 && (appetizer.containsKey(menuName) || mainMenu.containsKey(menuName) ||
                 dessert.containsKey(menuName) || drink.containsKey(menuName))
     }
 
