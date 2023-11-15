@@ -9,15 +9,19 @@ class OrderProcessing {
 
     fun getValidDate(): String {
         var validDate = false
-        var date: String
+        var date: String = ""
 
         do {
-            date = Console.readLine()
+            try {
+                date = Console.readLine()
 
-            if (!inputValidation.isValidDate(date)) {
-                println(MessageConstants.ERROR_INVALID_DATE)
-            } else {
-                validDate = true
+                if (!inputValidation.isValidDate(date)) {
+                    throw IllegalArgumentException(MessageConstants.ERROR_INVALID_DATE)
+                } else {
+                    validDate = true
+                }
+            } catch (e: IllegalArgumentException) {
+                println(e.message)
             }
 
         } while (!validDate)
@@ -39,12 +43,12 @@ class OrderProcessing {
 
     fun checkOrderValidity(orderedItems: Map<String, Int>): Boolean {
         if (orderedItems.all { MenuData.drink.containsKey(it.key) } && orderedItems.isNotEmpty()) {
-            println(MessageConstants.ERROR_INVALID_ORDER)
+            //println(MessageConstants.ERROR_INVALID_ORDER)
             return false
         }
 
         if (orderedItems.values.sum() > 20) {
-            println(MessageConstants.ERROR_INVALID_ORDER)
+            //println(MessageConstants.ERROR_INVALID_ORDER)
             return false
         }
 

@@ -23,6 +23,12 @@ class ChristmasPromotion {
             orderedItems = orderProcessing.getOrderDetails(inputMenu)
 
             validOrder = orderProcessing.checkOrderValidity(orderedItems)
+            try {
+                if (!validOrder)
+                    throw IllegalArgumentException(MessageConstants.ERROR_INVALID_ORDER)
+            } catch (e: IllegalArgumentException) {
+                println(e.message)
+            }
         }
 
 
