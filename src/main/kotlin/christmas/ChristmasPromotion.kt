@@ -13,14 +13,26 @@ class ChristmasPromotion {
         outputView.printWelcomeMessage()
 
         val date = orderProcessing.getValidDate()
+        val orderedItems = processOrder()
+        if (orderedItems.isNotEmpty()) {
+            val currentDate = date.toInt()
+            val totalAmount = menuPriceCalculator.calculateTotalAmount(orderedItems)
+            val discountedTotalAmount =
+                    discountCalculator.applyDiscounts(currentDate, totalAmount, MenuData.days, orderedItems)
+
+            orderProcessing.printOrderSummary(date, orderedItems, totalAmount, discountedTotalAmount)
+        }
+
+        Console.close()
+    }
+
+    private fun processOrder(): Map<String, Int> {
         var validOrder = false
-        var inputMenu = ""
-        var orderedItems: Map<String, Int> = mutableMapOf()
+        var orderedItems: Map<String, Int> = emptyMap()
 
         while (!validOrder) {
-            inputMenu = inputView.readMenu()
+            val inputMenu = inputView.readMenu()
             orderedItems = orderProcessing.getOrderDetails(inputMenu)
-
             validOrder = orderProcessing.checkOrderValidity(orderedItems)
             try {
                 if (!validOrder)
@@ -29,14 +41,6 @@ class ChristmasPromotion {
                 println(e.message)
             }
         }
-
-
-        val currentDate = date.toInt()
-        val totalAmount = menuPriceCalculator.calculateTotalAmount(orderedItems)
-        val discountedTotalAmount = discountCalculator.applyDiscounts(currentDate, totalAmount, MenuData.days, orderedItems)
-
-        orderProcessing.printOrderSummary(date, orderedItems, totalAmount, discountedTotalAmount)
-
-        Console.close()
+        return orderedItems
     }
 }
