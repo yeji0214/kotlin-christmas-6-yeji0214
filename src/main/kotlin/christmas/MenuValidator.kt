@@ -1,15 +1,10 @@
 package christmas
 
-import appetizer
-import dessert
-import drink
-import mainMenu
-
 
 class MenuValidator {
     fun isValidOrder(menuName: String, quantity: Int): Boolean {
-        return quantity >= 1 && (appetizer.containsKey(menuName) || mainMenu.containsKey(menuName) ||
-                dessert.containsKey(menuName) || drink.containsKey(menuName))
+        return quantity >= 1 && (MenuData.appetizer.containsKey(menuName) || MenuData.mainMenu.containsKey(menuName) ||
+                MenuData.dessert.containsKey(menuName) || MenuData.drink.containsKey(menuName))
     }
 
     fun extractMenuNameAndQuantity(parts: List<String>): Pair<String, Int> {

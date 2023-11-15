@@ -1,19 +1,15 @@
 package christmas
 
-import benefitsDetails
-import dessert
-import mainMenu
-
 class DiscountCalculator {
     fun applyDiscounts(currentDate: Int, totalAmount: Int, days: List<String>, orderedItems: Map<String, Int>): Int {
         val isWeekend = (currentDate % 7 == days.indexOf(MessageConstants.FRI) || currentDate % 7 == days.indexOf(MessageConstants.SAT))
         val weekdayOrWeekendDiscount = calculateWeekdayOrWeekendDiscount(isWeekend, orderedItems)
         val christmasDayDiscount = calculateChristmasDayDiscount(currentDate)
         if (christmasDayDiscount > 0)
-            benefitsDetails[MessageConstants.CHRISTMAS_DDAY_SALE] = christmasDayDiscount
+            MenuData.benefitsDetails[MessageConstants.CHRISTMAS_DDAY_SALE] = christmasDayDiscount
         val specialDiscount = calculateSpecialDiscount(currentDate)
         if (specialDiscount > 0)
-            benefitsDetails[MessageConstants.SPECIAL_SALE] = specialDiscount
+            MenuData.benefitsDetails[MessageConstants.SPECIAL_SALE] = specialDiscount
         val totalDiscount = calculateTotalDiscount(totalAmount, christmasDayDiscount, weekdayOrWeekendDiscount, specialDiscount)
 
         return totalAmount - totalDiscount
@@ -23,16 +19,16 @@ class DiscountCalculator {
         var additionalDiscount = 0
 
         if (isWeekend) {
-            val mainMenusCount = orderedItems.filter { mainMenu.containsKey(it.key) }.values.sum()
+            val mainMenusCount = orderedItems.filter { MenuData.mainMenu.containsKey(it.key) }.values.sum()
             additionalDiscount = 2023 * mainMenusCount
             if (additionalDiscount > 0) {
-                benefitsDetails[MessageConstants.WEEKEND_SALE] = additionalDiscount
+                MenuData.benefitsDetails[MessageConstants.WEEKEND_SALE] = additionalDiscount
             }
         } else {
-            val dessertMenusCount = orderedItems.filter { dessert.containsKey(it.key) }.values.sum()
+            val dessertMenusCount = orderedItems.filter { MenuData.dessert.containsKey(it.key) }.values.sum()
             additionalDiscount = 2023 * dessertMenusCount
             if (additionalDiscount > 0) {
-                benefitsDetails[MessageConstants.WEEKDAY_SALE] = additionalDiscount
+                MenuData.benefitsDetails[MessageConstants.WEEKDAY_SALE] = additionalDiscount
             }
         }
 

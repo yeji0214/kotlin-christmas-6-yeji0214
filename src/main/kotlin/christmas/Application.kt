@@ -1,4 +1,4 @@
-import christmas.ChristmasPromotion
+package christmas
 
 fun main() {
     ChristmasPromotion().start()

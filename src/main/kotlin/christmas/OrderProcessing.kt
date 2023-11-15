@@ -1,5 +1,5 @@
+package christmas
 import camp.nextstep.edu.missionutils.Console
-import christmas.*
 import java.text.NumberFormat
 import java.util.*
 
@@ -38,7 +38,7 @@ class OrderProcessing {
     }
 
     fun checkOrderValidity(orderedItems: Map<String, Int>): Boolean {
-        if (orderedItems.all { drink.containsKey(it.key) } && orderedItems.isNotEmpty()) {
+        if (orderedItems.all { MenuData.drink.containsKey(it.key) } && orderedItems.isNotEmpty()) {
             println(MessageConstants.ERROR_INVALID_ORDER)
             return false
         }
@@ -97,7 +97,7 @@ class OrderProcessing {
         }
 
         if (giftMenu == MessageConstants.ONE_CHAMPAGNE) {
-            benefitsDetails[MessageConstants.GIFT_EVENT] = 25000
+            MenuData.benefitsDetails[MessageConstants.GIFT_EVENT] = 25000
         }
         println("\n${MessageConstants.GIFT_MENU}\n$giftMenu")
     }
@@ -105,10 +105,10 @@ class OrderProcessing {
     private fun printBenefitsDetails() {
         totalBenefitAmount = 0
         println("\n${MessageConstants.BENEFITS_DETAILS}")
-        if (benefitsDetails.isEmpty()) {
+        if (MenuData.benefitsDetails.isEmpty()) {
             println(MessageConstants.NONE)
         } else {
-            for ((benefitName, benefitAmount) in benefitsDetails) {
+            for ((benefitName, benefitAmount) in MenuData.benefitsDetails) {
                 val formattedBenefitAmount = NumberFormat.getNumberInstance(Locale("en")).format(benefitAmount)
                 totalBenefitAmount += benefitAmount
                 println("${benefitName}: -${formattedBenefitAmount}${MessageConstants.WON}")
