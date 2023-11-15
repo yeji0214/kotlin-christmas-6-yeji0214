@@ -71,15 +71,36 @@ class MenuValidatorTest : NsTest() {
     }
 
 //    @Test
-//    fun `잘못된 형식이 입력된 경우`() {
-//        val inputValidation = InputValidation()
-//
-//        val exception = assertThrows<IllegalArgumentException> {
-//            inputValidation.receiveAndVerifyMenuAndQuantity("abc")
+//    fun `중복된 메뉴가 입력된 경우`() {
+//        assertSimpleTest {
+//            runException("3", "초코케이크-2,제로콜라-1,초코케이크-1")
+//            Assertions.assertThat(output()).contains("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
 //        }
-//
-//        assertEquals(MessageConstants.ERROR_INVALID_ORDER, exception.message)
 //    }
+
+    @Test
+    fun `음료만 주문한 경우`() {
+        assertSimpleTest {
+            runException("3", "제로콜라-1,레드와인-2")
+            Assertions.assertThat(output()).contains("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
+        }
+    }
+
+    @Test
+    fun `메뉴 형식이 다른 경우`() {
+        assertSimpleTest {
+            runException("10", "제로콜라+1,레드와인-2")
+            Assertions.assertThat(output()).contains("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
+        }
+    }
+
+    @Test
+    fun `메뉴 수량이 숫자가 아닌 경우`() {
+        assertSimpleTest {
+            runException("10", "제로콜라-a,레드와인-c")
+            Assertions.assertThat(output()).contains("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.")
+        }
+    }
 
     override fun runMain() {
         main()
