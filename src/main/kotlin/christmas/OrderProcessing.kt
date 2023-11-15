@@ -38,6 +38,11 @@ class OrderProcessing {
     }
 
     fun checkOrderValidity(orderedItems: Map<String, Int>): Boolean {
+
+        if (hasDuplicateMenus(orderedItems)) {
+            return false
+        }
+
         if (orderedItems.all { MenuData.drink.containsKey(it.key) } && orderedItems.isNotEmpty()) {
             return false
         }
@@ -47,6 +52,18 @@ class OrderProcessing {
         }
 
         return true
+    }
+
+    private fun hasDuplicateMenus(orderedItems: Map<String, Int>): Boolean {
+        val uniqueMenuNames = HashSet<String>()
+        for ((menuName, _) in orderedItems) {
+            if (menuName in uniqueMenuNames) {
+                println("[ERROR] 중복되는 메뉴: $menuName")
+                return true
+            }
+            uniqueMenuNames.add(menuName)
+        }
+        return false
     }
 
     fun determineBadge(totalBenefitAmount: Int): String {
