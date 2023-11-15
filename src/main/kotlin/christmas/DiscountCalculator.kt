@@ -4,7 +4,6 @@ import benefitsDetails
 import dessert
 import mainMenu
 
-
 class DiscountCalculator {
     fun applyDiscounts(currentDate: Int, totalAmount: Int, days: List<String>, orderedItems: Map<String, Int>): Int {
         val isWeekend = (currentDate % 7 == days.indexOf(MessageConstants.FRI) || currentDate % 7 == days.indexOf(MessageConstants.SAT))

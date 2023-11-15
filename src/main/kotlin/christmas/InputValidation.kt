@@ -20,22 +20,23 @@ class InputValidation {
         var mutableInput = input
 
         while (!validInput) {
-            val parts = mutableInput.split("-")
-            if (parts.size == 2) {
-                val result = menuValidator.extractMenuNameAndQuantity(parts)
-                menuName = result.first
-                quantity = result.second
+            try {
+                val parts = mutableInput.split("-")
+                if (parts.size == 2) {
+                    val result = menuValidator.extractMenuNameAndQuantity(parts)
+                    menuName = result.first
+                    quantity = result.second
 
-                if (menuValidator.isValidOrder(menuName, quantity)) {
-                    validInput = true
+                    if (menuValidator.isValidOrder(menuName, quantity)) {
+                        validInput = true
+                    } else {
+                        throw IllegalArgumentException(MessageConstants.ERROR_INVALID_ORDER)
+                    }
                 } else {
-                    println(MessageConstants.ERROR_INVALID_ORDER)
+                    throw IllegalArgumentException(MessageConstants.ERROR_INVALID_ORDER)
                 }
-            } else {
-                println(MessageConstants.ERROR_INVALID_ORDER)
-            }
-
-            if (!validInput) {
+            } catch (e: IllegalArgumentException) {
+                println(e.message)
                 mutableInput = userInputReader.getInputFromUser()
             }
         }
