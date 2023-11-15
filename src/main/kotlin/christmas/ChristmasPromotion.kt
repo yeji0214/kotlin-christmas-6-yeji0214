@@ -7,9 +7,10 @@ class ChristmasPromotion {
     private val menuPriceCalculator = MenuPriceCalculator()
     private val discountCalculator = DiscountCalculator()
     private val inputView = InputView()
+    private val outputView = OutputView()
 
     fun start() {
-        println(MessageConstants.WELCOME_MESSAGE)
+        outputView.printWelcomeMessage()
 
         val date = orderProcessing.getValidDate()
         var validOrder = false

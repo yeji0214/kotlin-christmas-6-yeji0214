@@ -6,6 +6,7 @@ class OrderProcessing {
     private val inputValidation = InputValidation()
     private var totalBenefitAmount = 0
     private val inputView = InputView()
+    private val outputView = OutputView()
 
     fun getValidDate(): String {
         var validDate = false

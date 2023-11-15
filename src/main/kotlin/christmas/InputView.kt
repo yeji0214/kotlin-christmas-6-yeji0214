@@ -2,6 +2,8 @@ package christmas
 import camp.nextstep.edu.missionutils.Console
 
 class InputView {
+    private val outputView = OutputView()
+
     fun readDate(): String {
         val input = Console.readLine()
 
@@ -9,8 +11,7 @@ class InputView {
     }
 
     fun readMenu(): String {
-        println(MessageConstants.INPUT_MENUS)
-
+        outputView.printInputMenus()
         val inputMenu = Console.readLine()
 
         return inputMenu

@@ -12,8 +12,6 @@ object MessageConstants {
     const val WEEKEND_SALE = "주말 할인"
     const val WEEKDAY_SALE = "평일 할인"
     const val ERROR_INVALID_DATE = "[ERROR] 유효하지 않은 날짜입니다. 다시 입력해 주세요."
-    const val ERROR_JUST_ORDER_DRINK = "[ERROR] 음료만 주문하실 수 없습니다."
-    const val ERROR_MORE_THAN_20_MENUS = "[ERROR] 최대 20개까지만 주문 가능합니다."
     const val SANTA = "산타"
     const val TREE = "트리"
     const val STAR = "별"
