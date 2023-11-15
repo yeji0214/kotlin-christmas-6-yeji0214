@@ -1,7 +1,6 @@
 package christmas
 
-class MaximumMenusExceededException(message: String) : Exception(message)
-class DrinksOnlyException(message: String) : Exception(message)
+data class MenuAndQuantity(var menuName: String, var quantity: Int)
 
 class InputValidation {
     private val dateValidator = DateValidator()
@@ -13,34 +12,38 @@ class InputValidation {
     }
 
     fun receiveAndVerifyMenuAndQuantity(input: String): Pair<String, Int> {
-        // Delegate to the MenuValidator
-        var validInput = false
-        var menuName = ""
-        var quantity = 0
+        var menuAndQuantity = MenuAndQuantity("", 0)
         var mutableInput = input
 
-        while (!validInput) {
+        while (true) {
             try {
                 val parts = mutableInput.split("-")
-                if (parts.size == 2) {
-                    val result = menuValidator.extractMenuNameAndQuantity(parts)
-                    menuName = result.first
-                    quantity = result.second
-
-                    if (menuValidator.isValidOrder(menuName, quantity)) {
-                        validInput = true
-                    } else {
-                        throw IllegalArgumentException(MessageConstants.ERROR_INVALID_ORDER)
-                    }
-                } else {
-                    throw IllegalArgumentException(MessageConstants.ERROR_INVALID_ORDER)
-                }
+                menuAndQuantity = processInputValidation(parts, menuAndQuantity)
+                break
             } catch (e: IllegalArgumentException) {
                 println(e.message)
                 mutableInput = userInputReader.getInputFromUser()
             }
         }
 
-        return menuName to quantity
+        return menuAndQuantity.menuName to menuAndQuantity.quantity
+    }
+
+    private fun processInputValidation(parts: List<String>, menuAndQuantity: MenuAndQuantity): MenuAndQuantity {
+        return if (parts.size == 2) {
+            val result = menuValidator.extractMenuNameAndQuantity(parts)
+            val newMenuAndQuantity = menuAndQuantity.copy(
+                    menuName = result.first,
+                    quantity = result.second
+            )
+
+            if (menuValidator.isValidOrder(newMenuAndQuantity.menuName, newMenuAndQuantity.quantity)) {
+                newMenuAndQuantity
+            } else {
+                throw IllegalArgumentException(MessageConstants.ERROR_INVALID_ORDER)
+            }
+        } else {
+            throw IllegalArgumentException(MessageConstants.ERROR_INVALID_ORDER)
+        }
     }
 }

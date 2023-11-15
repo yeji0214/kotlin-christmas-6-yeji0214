@@ -31,7 +31,6 @@ class DiscountCalculator {
                 MenuData.benefitsDetails[MessageConstants.WEEKDAY_SALE] = additionalDiscount
             }
         }
-
         return additionalDiscount
     }
 
